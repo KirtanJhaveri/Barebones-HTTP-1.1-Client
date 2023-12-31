@@ -1,154 +1,69 @@
-# Homework 2: A Barebones HTTP/1.1 Client
+# Barebones HTTP/1.1 Client
 
-In this programming exercise, you will create a barebones web client. While
-python includes a basic http client module `http.client`, this assignment will
-serve as a learning experience for translating a protocol into an
-implementation. Your deliverable will be a client which only implements the
-`GET` method and follows the basics of the HTTP/1.1 specification, enough to
-download files as one would with the command line program `curl`.
+This project showcases an independently developed barebones HTTP/1.1 client capable of performing fundamental HTTP GET requests and efficiently retrieving document bodies from URLs. Creating a barebones HTTP/1.1 client from scratch offers insights into protocol intricacies, networking fundamentals, and the inner workings of HTTP requests and responses.
 
-## HTTP/1.1 Features
+## Table of Contents
 
-[HTTP/1.0](https://tools.ietf.org/search/rfc1945) describes the most basic
-functionality that an HTTP client is required to do. HTTP/1.1 includes several
-new features that extend the protocol. For this assignment, you will only be
-required to implement these additional features:
+- [Features Implemented](#features-implemented)
+- [How to Use](#how-to-use)
+- [Code Structure](#code-structure)
+- [Testing](#testing)
+- [Testing Script](#testing-script)
+- [Future Enhancements](#future-enhancements)
 
-  * Include a `Host:` header
-  * Correctly interpret `Transfer-encoding: chunked`
-  * Include a `Connection: close` header, or handle persistent connections
+## Features Implemented
 
-These new features are described in James Marshall's excellent [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/#http1.1clients) under the HTTP/1.1
-clients subsection.
+### HTTP/1.1 Functionality
+- **Host Header**: The client includes a `Host` header in requests, as required by HTTP/1.1 specifications.
+- **Transfer-Encoding: chunked**: Correct interpretation of chunked transfer encoding in responses.
+- **Connection Header**: Implementation of `Connection: close` for handling persistent connections.
 
-Note that the RFCs are your friends: if you're having trouble with
-`Transfer-encoding`, check [the RFC][http] for hints!
+### GET Method
+- Focused on the GET method to retrieve content from URLs.
+- Handles the initial line, headers, and content bytes as per the HTTP protocol.
 
+### Redirect Handling
+- Capable of handling redirects (status code 301) by following the location provided in the response.
 
-## Basic HTTP functionality
+### Error Handling
+- Basic error handling implemented for socket-related errors. Returns `None` if there's an issue retrieving the resource.
 
-As seen in class, HTTP is a stateless request-response protocol that consists
-of an initial line, zero or more headers, and zero or more bytes of content.
-Your program will implement a function, `retrieve_url`, which takes a url (as
-a `str`) as its only argument, and uses the HTTP protocol to retrieve and
-return the body's bytes (do not decode those bytes into a string). Consult
-the book or your class notes for the basics of the HTTP protocol.
+## How to Use
 
-You may assume that the URL will not include a fragment, query string, or
-authentication credentials. You are not required to follow any redirects -
-only return bytes when receiving a `200 OK` response from the server. If for
-any reason your program cannot retrieve the resource correctly, `retrieve_url`
-should return `None`.
+The main functionality lies in the `retrieve_url` function, which takes a URL string as an argument and returns the body of the document as bytes.
 
-
-## Testing Script
-
-Testing your code does not have to be a manual affair. This assignment lends
-itself very well to automated testing.
-
-We have provided a testing script for you. You will need to install the
-[requests](http://docs.python-requests.org/en/master/) library to use it
-(this can be done using `pip install requests`, or possibly
-  `pip3 install requests`, depending on your setup). While you cannot
-use `requests` to implement your assignment, you _can_ use it to test your code.
-
-The `requests` module has far more features implemented from the HTTP spec
-(and a different interface) than the code that you are implementing.
-
-One you have `requests` installed, you can call the testing script with
-`python ./hw2_test.py` (with an optional `--debug` flag to provide more
-information).  The testing script will compare your implementation of the
-`retrieve_url` function with a correct one, when calling a set of URLs.
-You should make sure that your function is giving the output that
-matches the known-correct output fetched by the testing script.
-
-Remember, you only need to implement the features listed above. You should
-probably implement the `Host:` header (important) and the `Connection: close`
-header (easy) first, and then add chunked transfer encoding later. If you
-have any doubts about what you can/can't use, or what you should/shouldn't
-implement, ask on Piazza.
-
-
-## Template
-
-A trivial template is provided in this repository, as `hw2.py`.
-
-## Grading
-
-For this assignment, we will be providing a testing harness.  This is not 
-guaranteed to be the method we use
-for grading, but it will likely be very similar. If you wish, you can share
-test cases you have written with the class. 
-
-Your program will be tested (at least) on these urls:
-
-```python
-TEST_CASES = [
-    'http://www.example.com',  # most basic example (with no slash) 
-    'http://serenegoodfinelight.neverssl.com/online/',  # another basic example
-    'http://help.websiteos.com/websiteos/htmlpage.jpg',  # is an image
-    'http://go.com/doesnotexist',  # causes 404
-    'http://www.ifyouregisterthisforclassyouareoutofcontrol.com/', # NXDOMAIN
-    'http://portquiz.net:8080/', # nonstandard port
-    'http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx' # chunked encoding 
-]
+### Usage
+```bash
+python3 client.py <URL>
 ```
+## Code Structure
 
-If you're debugging a problem or simply curious, try firing up Wireshark, and
-then fetch the URL with the `requests` library as
-well as with your code.  You'll be able to compare both requests as they
-were sent, as well as the responses received.
+The code is structured as follows:
 
-### File Submission Requirements
+- `client.py`: Contains the main implementation of the HTTP/1.1 client.
+- `test.py`: Testing script with test cases for the implemented client.
+- `README.md`: Detailed information about the project.
 
-You should include the following files in your repo when submitting the
-assignment.  All other files will be ignored.
+## Testing
 
-  * `hw2.py`: python3 code that implements the function `retrieve_url`, matching
-    the requirements discussed in this assignment.
-  * `netid`: a text file that contains only your UIC NetID.
+The implemented client can be tested using various URLs to verify its functionality. Consider using the provided testing script or crafting your own tests to ensure correctness and robustness.
 
-### Points and Scoring
-There is a total of **16 main points**, and **4 bonus points** on this
-assignment, for a grand total of **20 possible points**.
+### Testing Script
 
-  * **1 point** for correctly handling each of the 7 URLs mentioned above. (total of 7)
-  * **3 points** for correctly handling each of 3 additional URLs. (total of 9)
-  * **1 bonus point** for correctly handling each of the additional
-    test cases given in the `TEST_CASES_BONUS` list in the `hw2_test.py`
-    testing script. (total of 3)
-  * **1 bonus point** for submitting a `hw2.py` that is "fully compliant" with
-    the `pep8` and `pylint`.  "Fully compliant" here means that `pep8` returns
-    with no error messages, and `pylint` scores your code `10/10`. (total of 1)
+The repository includes a testing script (`test.py`) that contains test cases for a simple HTTP client. This script compares the output of your implementation (`retrieve_url`) against the expected output fetched by using `requests`. It conducts tests on standard URLs as well as bonus cases covering HTTPS, redirects, and UTF-8 characters in URLs.
 
-Your assignment is only eligible for bonus points if you get at least 5
-points.  I.e. you cannot submit a well-formatted, but completely broken,
-`hw2.py` and get the bonus point.
+To execute the testing script:
 
-Not correctly including the `netid` file will be an automatic 0 for
-the assignment.
+```bash
+python3 test.py
+```
+The script will compare your implementation with the expected output for various URLs and provide feedback on correctness.
 
-## Allowable sources
+## Future Enhancements
 
-You may not use any libraries which implement parts or the whole of the `HTTP`
-specification - you must perform the basic request and response
-parsing/generation yourself, as well as the chunked content encoding.
+Potential improvements or additional features that could be implemented:
 
-Do not import or use any python libraries, or third party code, beyond
-what is imported in the skeleton / `hw2.py` file in your repo.
-
-These resources may be useful:
-  * [Python standard library documentation](https://docs.python.org/3/library/)
-  * [HTTP Made Easy](https://www.jmarshall.com/easy/http/)
-  * [HTTP/1.1 RFC](https://www.ietf.org/rfc/rfc2616.txt)
-
-Using _any_ code from another source, even a single line, even with a citation,
-is not allowed. This includes using any implementation code from the standard
-library itself. I highly recommend not even Googling for solutions to portions
-of this homework - as soon as you've seen an alternate implementation, it is
-very hard to write one's own.
-
-**Remember**, if you don't push, we don't see it! If you push even one second
-too late, your assignment won't be graded. We will be counting turnin by
-push time, rather than by commit time, so please make sure to leave yourself
-ample time to verify that your code has been submitted successfully.
+- **HTTP Methods**: Extension to support other HTTP methods like POST, PUT, DELETE, etc.
+- **Header Parsing**: Improved parsing of headers for more comprehensive handling.
+- **Performance Optimization**: Optimizing socket handling for better performance.
+- **Logging and Debugging**: Incorporating logging for better debugging capabilities.
